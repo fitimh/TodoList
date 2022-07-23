@@ -26,13 +26,10 @@ Route::prefix('todo')->group(function () {
 });
 
 
-// Tags
-Route::prefix('tags')->group(function () {
-    Route::post('addTags', [TagsController::class, 'create']);
-    Route::get('/', [TagsController::class, 'getAll']);
-    Route::get('{id}', [TagsController::class, 'getById']);
-    Route::delete('deleteTags/{id}', [TagsController::class, 'destroy']);
-});
-
-
-// oke tash po du me kriju ni relationship qe me mujt me ba tags ne ni todo
+// // Tags
+// Route::prefix('tags')->group(function () {
+//     Route::post('addTags', [TagsController::class, 'create']);
+//     Route::get('/', [TagsController::class, 'getAll']);
+//     Route::get('{id}', [TagsController::class, 'getById']);
+//     Route::delete('deleteTags/{id}', [TagsController::class, 'destroy']);
+// });
