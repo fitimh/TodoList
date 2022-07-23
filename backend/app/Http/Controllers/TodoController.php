@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\Todo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TodoController extends Controller
 {
@@ -12,8 +15,66 @@ class TodoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(Request $request)
+
+    public function getAll(Request $request)
     {
-        //
+        // Filter As Todo and by Tag
+        if ($request->has('filter')) {
+            $todo = Todo::whereHas('tags', function ($query) use ($request) {
+                $query->where('tag', 'like', '%' . $request->filter . '%');
+            })->get();
+        } else if ($request->has('today')) {
+            $today = Carbon::today()->toDateString();
+            $todo = Todo::whereDate('created_at', $today)->get();
+        } else if ($request->has('done')) {
+            $todo = Todo::where('status', 1)->get();
+        } else {
+            $todo = Todo::get();
+        }
+        return response()->json($todo);
+    }
+    public function addTodo(Request $request)
+    {
+        $v = Validator::make($request->all(), [
+            // 'title' => "required|min:4",
+            'title' => "required|unique:todos,title|min:4",
+            'notes' => 'required|min:10',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'status' => 'required|in:0,1',
+            'tags' => 'required|array',
+            'tags.*.tag' => 'required|string'
+        ]);
+        if ($v->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $v->errors()
+            ], 422);
+        }
+
+        $todo = Todo::create($v->validated());
+
+        $req = $v->validated();
+        $tags = $req["tags"];
+        $todo->tags()->createMany($tags);
+        return response()->json(['status' => 'Success!', 'data' => $todo, 'tags' => $tags], 200);
+    }
+
+    public function deleteTodoById($id)
+    {
+        $todo = Todo::find($id);
+
+        if ($todo) {
+            $todo->delete();
+            return response()->json('Post deleted successfully!');
+        }
+    }
+    public function getById($id)
+    {
+        $todo = Todo::find($id);
+        return response()->json($todo);
+    }
+    public function filter(Request $request)
+    {
     }
 }
