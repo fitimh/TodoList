@@ -1,24 +1,26 @@
 <script>
-import {mapState} from "vuex";
+// import {mapState} from "vuex";
 
+import HeaderVue from "./components/Header.vue";
+import SidebarVue from "./components/Sidebar.vue";
+import LayoutVue from "./components/Layout.vue";
 export default {
-   components: {},
-   computed: {
-      ...mapState(["user"]),
+   components: {
+      HeaderVue,
+      SidebarVue,
+      LayoutVue,
    },
+   // computed: {
+   //    ...mapState(["user"]),
+   // },
 };
 </script>
 
 <template>
-   <router-view></router-view>
+   <HeaderVue />
+   <SidebarVue />
+   <LayoutVue />
+   <!-- <router-view></router-view> -->
 </template>
 
-<style>
-#app {
-   font-family: Avenir, Helvetica, Arial, sans-serif;
-   -webkit-font-smoothing: antialiased;
-   -moz-osx-font-smoothing: grayscale;
-   text-align: center;
-   color: #2c3e50;
-}
-</style>
+<style src="./assets/css/style.css"></style>
