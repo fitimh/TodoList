@@ -1,26 +1,16 @@
-<script>
-// import {mapState} from "vuex";
+<template>
+   <router-view></router-view>
 
-import HeaderVue from "./components/Header.vue";
-import SidebarVue from "./components/Sidebar.vue";
-import LayoutVue from "./components/Layout.vue";
+   <notification-component />
+</template>
+
+<script>
+import notificationComponent from "@/components/Notification.vue";
+
 export default {
-   components: {
-      HeaderVue,
-      SidebarVue,
-      LayoutVue,
-   },
-   // computed: {
-   //    ...mapState(["user"]),
-   // },
+   components: {notificationComponent},
+   setup() {},
 };
 </script>
-
-<template>
-   <HeaderVue />
-   <SidebarVue />
-   <LayoutVue />
-   <!-- <router-view></router-view> -->
-</template>
 
 <style src="./assets/css/style.css"></style>

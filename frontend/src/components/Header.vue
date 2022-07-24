@@ -16,9 +16,31 @@
                   placeholder="Search..."
                   id="search__bar"
                   aria-label="Search"
+                  v-on:keyup.enter="search"
                />
             </div>
          </div>
       </nav>
    </header>
 </template>
+<script>
+import {useRouter} from "vue-router";
+export default {
+   setup() {
+      const router = useRouter();
+      const search = (e) => {
+         const value = e.target.value;
+         if (value) {
+            router.push({
+               name: "todo",
+               params: {filter: "search", search: value},
+            });
+         }
+      };
+
+      return {
+         search,
+      };
+   },
+};
+</script>

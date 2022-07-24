@@ -19,14 +19,14 @@ class TodoController extends Controller
     public function getAll(Request $request)
     {
         // Filter As Todo and by Tag
-        if ($request->has('filter')) {
+        if ($request->has('filter') && $request->filter != "false") {
             $todo = Todo::whereHas('tags', function ($query) use ($request) {
                 $query->where('tag', 'like', '%' . $request->filter . '%');
             })->get();
-        } else if ($request->has('today')) {
+        } else if ($request->has('today') && $request->today == "true") {
             $today = Carbon::today()->toDateString();
             $todo = Todo::whereDate('created_at', $today)->get();
-        } else if ($request->has('done')) {
+        } else if ($request->has('done') && $request->done == "true") {
             $todo = Todo::where('status', 1)->get();
         } else {
             $todo = Todo::get();
