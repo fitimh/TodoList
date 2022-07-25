@@ -47,27 +47,22 @@
               </div>
             </div>
             <div class="items_icon d-flex">
-              <i class="fa-solid fa-circle-exclamation"></i>
+               <i class="fa-solid fa-circle-exclamation"></i>
               <div v-if="todo.favorites == null">
                 <i
-                  @click="makeFavorite($event, todo.id)"
+                  @click="makeFavorite($event, todo.id, todo)"
                   class="fa-solid fa-star"
                 ></i>
               </div>
               <div v-else>
                 <i
-                  style="color: yellow"
+                  style="color: orange"
                   @click="makeFavorite($event, todo.id)"
                   class="fa-solid fa-star"
                 ></i>
               </div>
-
-              <!-- <i
-                @click="makeFavorite($event, todo.id)"
-                class="fa-solid fa-star"
-              ></i> -->
               <i
-                @click="deleteTag(todo.id)"
+                @click="deleteTodo_Tag(todo.id)"
                 class="fa-solid fa-trash text-danger"
               ></i>
               <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -89,15 +84,7 @@
               Mark as Done
             </label>
             <div class="items_icon d-flex">
-              <i class="fa-solid fa-circle-exclamation"></i>
-              <i
-                @click="makeFavorite($event, todo.id)"
-                class="fa-solid fa-star"
-              ></i>
-              <i
-                @click="deleteTag(todo.id)"
-                class="fa-solid fa-trash text-danger"
-              ></i>
+         
               <i class="fa-solid fa-ellipsis-vertical"></i>
             </div>
           </div>
@@ -121,13 +108,16 @@
               <textarea placeholder="Notes *" v-model="notes"></textarea>
             </div>
             <div class="tags-input-container">
-              <div
-                class="tag"
-                v-for="(tag, index) in tags"
-                :key="'tag' + index"
-              >
-                {{ tag }}
+              <div class="add__tag">
+                <div
+                  class="tag"
+                  v-for="(tag, index) in tags"
+                  :key="'tag' + index"
+                >
+                  {{ tag }}
+                </div>
               </div>
+              <label class="addtags">#AddTags</label>
               <input v-model="tagValue" v-on:keyup.enter="addTags" />
             </div>
             <div class="col-12">
@@ -144,7 +134,6 @@
 <script>
 import { onMounted, ref, watchEffect } from "vue";
 import { VueDraggableNext } from "vue-draggable-next";
-import $ from "jquery";
 import axios from "@/config/axios";
 import { useRoute } from "vue-router";
 import { showNotification } from "@/config/show-notification.js";
@@ -168,6 +157,7 @@ export default {
     const getTodos = () => {
       const filter = route.params.filter;
       const paramsData = {
+      
         done: filter == "done" ? true : false,
         today: filter == "today" ? true : false,
         scheduled: filter == "scheduled" ? true : false,
@@ -176,12 +166,6 @@ export default {
       };
       axios.get("/todo", { params: paramsData }).then((res) => {
         todos.value = res.data;
-      });
-    };
-    const getAll = () => {
-      axios.get("/todo").then((res) => {
-        todos.value = res.data;
-        console.log(res);
       });
     };
     const addTodo = async () => {
@@ -204,7 +188,7 @@ export default {
         url: "/todo/addTodo",
         method: "POST",
         data: formData,
-      }).then(async (res) => {
+      }).then(async () => {
         title.value = "";
         status.value = "";
         start_date.value = "";
@@ -213,7 +197,7 @@ export default {
         location.reload();
       });
     };
-    const deleteTag = (id) => {
+    const deleteTodo_Tag = (id) => {
       var x = confirm("Are you sure you want to delete?");
       if (x === true) {
         axios.delete("/todo/removeTodo/" + id).then(async () => {
@@ -223,24 +207,25 @@ export default {
             duration: 5000,
             appearance: "light",
           });
-          getAll();
+          getTodos();
         });
       }
     };
-    const makeFavorite = (e, id) => {
+    const makeFavorite = (e, id, todo) => {
       axios.post("/todo/favorite/" + id).then(async (res) => {
-        location.reload();
+        todo.favorites = res.data.favorites
+        getTodos();
       });
     };
     const addTags = (e) => {
-      tags.value.push(e.target.value);
+      tags.value.push("#" + e.target.value);
       tagValue.value = "";
     };
     const removeTag = (index) => {
-      addTags.value.splice(index, 1);
+      tagValue.value.splice(index, 1);
     };
     onMounted(() => {
-      getAll(),
+      getTodos(),
         watchEffect(() => {
           if (route.params.filter) {
             getTodos();
@@ -261,7 +246,8 @@ export default {
       activeTag,
       tagValue,
       makeFavorite,
-      deleteTag,
+      deleteTodo_Tag,
+      removeTag,
       enabled: true,
       dragging: false,
     };
@@ -281,10 +267,12 @@ export default {
 
 <style scoped>
 .tags-input-container {
-  width: 100%;
-  max-width: 600px;
+  padding-left: 3rem;
+  max-width: 100%;
   padding: 10px;
   background-color: rgba(255, 255, 255, 0.7);
+  width: 300px;
+  padding-left: 3rem;
 }
 .tags-input-container input {
   width: 100%;
@@ -292,7 +280,10 @@ export default {
   margin: 0;
   border: 0;
   outline: none;
-  background-color: #efefef;
+  border: 1px solid #4444;
+  border-radius: 10px;
+  box-sizing: border-box;
+  box-shadow: 20px 10px #ebebeb6b;
   font-size: 1rem;
 }
 .tags-input-container .tag {
@@ -302,7 +293,9 @@ export default {
   display: flex;
   justify-content: center;
   cursor: pointer;
-  background-color: #ffb743;
+  background-color: #ebebeb;
+  border-radius: 20px;
+  font-weight: bold;
 }
 .tags-input-container .tag:hover {
   /* background-color: #57c340; */
