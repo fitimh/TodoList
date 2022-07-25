@@ -28,6 +28,14 @@ class TodoController extends Controller
             $todo = Todo::whereDate('created_at', $today)->get();
         } else if ($request->has('done') && $request->done == "true") {
             $todo = Todo::where('status', 1)->get();
+        } else if ($request->has('scheduled') && $request->scheduled == "true") {
+            $sch_date = Carbon::today()->toDateString();
+            $todo = Todo::whereDate('start_date', ">", $sch_date)->get();
+        } else if ($request->has('priority') && $request->priority == "true") {
+            $todo = Todo::where('favorites', 1)->get();
+            return response()->json($todo);
+
+            dd($todo);
         } else {
             $todo = Todo::get();
         }
@@ -66,7 +74,7 @@ class TodoController extends Controller
 
         if ($todo) {
             $todo->delete();
-            return response()->json('Post deleted successfully!');
+            return response()->json('Todo deleted successfully!');
         }
     }
     public function getById($id)
@@ -74,7 +82,16 @@ class TodoController extends Controller
         $todo = Todo::find($id);
         return response()->json($todo);
     }
-    public function filter(Request $request)
+    public function addfavorite($id)
     {
+        $todo = Todo::find($id);
+
+        if ($todo) {
+            $todo->favorites = 1;
+
+            $todo->save();
+
+            return response()->json($todo);
+        }
     }
 }

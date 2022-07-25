@@ -20,6 +20,8 @@ class CreateTodosTable extends Migration
             $table->date('end_date');
             $table->integer('status')->default(0)->comment('0 => Pending, 1 => Active');
             $table->string('notes');
+            $table->integer('favorites')->comment('0 => No, 1 => Yes')->nullable();
+
             $table->timestamps();
         });
     }

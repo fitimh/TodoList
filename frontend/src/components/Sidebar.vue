@@ -12,7 +12,7 @@
                <div class="list-group list-group-flush mx-3 mt-4">
                   <div class="all-btn">
                      <router-link
-                        :to="{name: 'todo', params: {filter: ''}}"
+                        :to="{name: 'todo', params: {filter: 'All'}}"
                         class="list-group-item list-group-item-action py-2 ripple active"
                         aria-current="true"
                      >

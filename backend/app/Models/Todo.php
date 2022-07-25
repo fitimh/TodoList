@@ -14,7 +14,10 @@ class Todo extends Model
         'start_date',
         'end_date',
         'status', //per make a done 
-        'notes'
+        'notes',
+        'favorite'
+
+
     ];
     protected $hidden = [
         'created_at', 'updated_at', 'deleted_at'
