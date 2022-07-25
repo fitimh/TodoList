@@ -56,8 +56,8 @@
               </div>
               <div v-else>
                 <i
-                  style="color: yellow"
-                  @click="makeFavorite($event, todo.id, todo)"
+                  style="color: orange"
+                  @click="makeFavorite($event, todo.id)"
                   class="fa-solid fa-star"
                 ></i>
               </div>
@@ -116,13 +116,16 @@
               <textarea placeholder="Notes *" v-model="notes"></textarea>
             </div>
             <div class="tags-input-container">
-              <div
-                class="tag"
-                v-for="(tag, index) in tags"
-                :key="'tag' + index"
-              >
-                {{ tag }}
+              <div class="add__tag">
+                <div
+                  class="tag"
+                  v-for="(tag, index) in tags"
+                  :key="'tag' + index"
+                >
+                  {{ tag }}
+                </div>
               </div>
+              <label class="addtags">#AddTags</label>
               <input v-model="tagValue" v-on:keyup.enter="addTags" />
             </div>
             <div class="col-12">
@@ -223,7 +226,7 @@ export default {
       });
     };
     const addTags = (e) => {
-      tags.value.push(e.target.value);
+      tags.value.push("#" + e.target.value);
       tagValue.value = "";
     };
     const removeTag = (index) => {
@@ -272,10 +275,12 @@ export default {
 
 <style scoped>
 .tags-input-container {
-  width: 100%;
-  max-width: 600px;
+  padding-left: 3rem;
+  max-width: 100%;
   padding: 10px;
   background-color: rgba(255, 255, 255, 0.7);
+  width: 300px;
+  padding-left: 3rem;
 }
 .tags-input-container input {
   width: 100%;
@@ -283,7 +288,10 @@ export default {
   margin: 0;
   border: 0;
   outline: none;
-  background-color: #efefef;
+  border: 1px solid #4444;
+  border-radius: 10px;
+  box-sizing: border-box;
+  box-shadow: 20px 10px #ebebeb6b;
   font-size: 1rem;
 }
 .tags-input-container .tag {
@@ -293,7 +301,9 @@ export default {
   display: flex;
   justify-content: center;
   cursor: pointer;
-  background-color: #ffb743;
+  background-color: #ebebeb;
+  border-radius: 20px;
+  font-weight: bold;
 }
 .tags-input-container .tag:hover {
   /* background-color: #57c340; */
