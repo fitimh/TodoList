@@ -56,12 +56,13 @@
               </div>
               <div v-else>
                 <i
-
+                  style="color: orange"
+                  @click="makeFavorite($event, todo.id)"
                   class="fa-solid fa-star"
                 ></i>
               </div>
               <i
-                @click="deleteTag(todo.id)"
+                @click="deleteTodo_Tag(todo.id)"
                 class="fa-solid fa-trash text-danger"
               ></i>
               <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -83,15 +84,7 @@
               Mark as Done
             </label>
             <div class="items_icon d-flex">
-              <!-- <i class="fa-solid fa-circle-exclamation"></i>
-              <i
-                @click="makeFavorite($event, todo.id, todo)"
-                class="fa-solid fa-star"
-              ></i>
-              <i
-                @click="deleteTodo_Tag(todo.id)"
-                class="fa-solid fa-trash text-danger"
-              ></i> -->
+         
               <i class="fa-solid fa-ellipsis-vertical"></i>
             </div>
           </div>
