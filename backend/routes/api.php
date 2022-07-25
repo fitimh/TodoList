@@ -23,11 +23,10 @@ Route::prefix('todo')->group(function () {
     Route::post('addTodo', [TodoController::class, 'addTodo']);
     Route::delete('removeTodo/{id}', [TodoController::class, 'deleteTodoById']);
     Route::get('/{id}', [TodoController::class, 'getById']);
-
     Route::post('/favorite/{id}', [TodoController::class, 'addfavorite']);
 });
 
-
+//
 // // Tags
 // Route::prefix('tags')->group(function () {
 //     Route::post('addTags', [TagsController::class, 'create']);

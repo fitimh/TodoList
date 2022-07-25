@@ -13,7 +13,7 @@ class Todo extends Model
         'title',
         'start_date',
         'end_date',
-        'status', //per make a done 
+        'status', //is done
         'notes',
         'favorite'
 
@@ -25,9 +25,19 @@ class Todo extends Model
 
     protected $with = ['tags'];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        Todo::deleting(function ($model) {
+            $model->tags()->delete();
+        });
+
+
+    }
 
     public function tags()
     {
-        return $this->hasMany(TodoTags::class, 'todo_id', 'id');
+        return $this->hasMany(TodoTags::class);
     }
 }
