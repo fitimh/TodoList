@@ -164,8 +164,7 @@ header.header__bar {
    border-radius: 0 20px 20px 0px;
    width: 17rem;
 }
-
-.all-btn a {
+.all-btn .active  {
    background-color: #2b9ce5 !important;
 }
 

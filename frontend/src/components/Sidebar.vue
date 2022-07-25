@@ -1,4 +1,5 @@
 <template>
+
   <div class="sidebar__item">
     <div class="side__1 w-25">
       <nav
@@ -54,6 +55,7 @@
                 <i class="fa-solid fa-check"></i>
                 <span>Done</span>
               </router-link>
+
             </div>
           </div>
         </div>

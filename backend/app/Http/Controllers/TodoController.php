@@ -21,8 +21,6 @@ class TodoController extends Controller
         } else if ($request->has('today') && $request->today == "true") {
             $today = Carbon::today()->toDateString();
             $todo = Todo::whereDate('created_at', $today);
-            return response()->json($todo);
-
         } else if ($request->has('done') && $request->done == "true") {
             $todo = Todo::where('status', 1);
         } else if ($request->has('scheduled') && $request->scheduled == "true") {
@@ -41,9 +39,7 @@ class TodoController extends Controller
     public function addTodo(Request $request)
     {
         $v = Validator::make($request->all(), [
-            'title' => "required|min:4",
-
-//            'title' => "required|unique:todos,title|min:4",
+            'title' => "required|unique:todos,title|min:4",
             'notes' => 'required|min:10',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
