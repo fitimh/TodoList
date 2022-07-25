@@ -1,286 +1,250 @@
 <template>
-   <div class="content__item-side">
-      <div
-         class="content__item-side-1 pt-5 d-flex bg-light justify-content-between bg-grey"
-      ></div>
-      <div
-         class="content__item__side d-flex bg-light justify-content-between bg-grey"
-      >
-         <div class="side__2 bg-light w-50 p-2">
-            <draggable
-               class="dragArea list-group w-full"
-               :list="todos"
-               @change="log"
-            >
-               <div
-                  v-for="todo in todos"
-                  :key="todo"
-                  class="todoApp w-100 d-flex border pt-2"
-               >
-                  <div class="icons__item">
-                     <span>=</span>
-                  </div>
-                  <div class="item__content">
-                     <h6>{{ todo.title }}</h6>
-                     <span>{{ todo.notes }}</span>
-                     <div class="tags__task d-flex">
-                        <div class="btn-front-back">
-                           <div
-                              class="btn-front"
-                              v-for="tag in todo.tags"
-                              :key="tag"
-                           >
-                              <span
-                                 ><i class="fa-solid fa-circle"></i>
-                                 {{ tag.tag }}</span
-                              >
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="items_icon d-flex">
-                     <i class="fa-solid fa-circle-exclamation"></i>
-                     <i
-                        @click="makeFavorite($event, todo.id)"
-                        class="fa-solid fa-star"
-                     ></i>
-                     <i class="fa-solid fa-trash"></i>
-                     <i class="fa-solid fa-ellipsis-vertical"></i>
-                  </div>
-               </div>
-            </draggable>
-         </div>
-         <div class="side__3 bg-light w-50">
-            <div class="todo__forms">
-               <div class="todo__done d-flex align-items-center">
-                  <label>
-                     <input
-                        type="checkbox"
-                        data-ng-model="example.check"
-                        v-model="status"
-                        id="flexCheckDefault"
-                     />
-                     <span class="box"></span>
-                     Mark as Done
-                  </label>
-                  <div class="items_icon d-flex">
-                     <i class="fa-solid fa-circle-exclamation"></i>
-                     <i class="fa-solid fa-star"></i>
-                     <i class="fa-solid fa-trash"></i>
-                     <i class="fa-solid fa-ellipsis-vertical"></i>
-                  </div>
-               </div>
-
-               <div class="row g-3">
-                  <div class="title__todo">
-                     <textarea placeholder="Title *" v-model="title"></textarea>
-                  </div>
-                  <div class="col-md-6">
-                     <input
-                        type="date"
-                        placeholder="Start Date*"
-                        v-model="start_date"
-                     />
-                  </div>
-                  <div class="col-md-6 col-sm-12">
-                     <input
-                        type="date"
-                        placeholder="Due Date*"
-                        v-model="end_date"
-                     />
-                  </div>
-
-                  <div class="title__todo">
-                     <textarea placeholder="Notes *" v-model="notes"></textarea>
-                  </div>
-                  <div class="tags-input-container">
-                     <div
-                        class="tag"
-                        v-for="(tag, index) in tags"
-                        :key="'tag' + index"
-                     >
-                        {{ tag }}
-                     </div>
-                     <input v-model="tagValue" v-on:keyup.enter="addTags" />
-                  </div>
-                  <div class="col-12">
-                     <button
-                        type="button"
-                        @click="addTodo"
-                        class="btn btn-primary"
-                     >
-                        Save
-                     </button>
-                  </div>
-               </div>
+  <div class="content__item-side">
+    <div
+      class="content__item-side-1 pt-5 d-flex bg-light justify-content-between bg-grey"
+    ></div>
+    <div
+      class="content__item__side d-flex bg-light justify-content-between bg-grey"
+    >
+      <div class="side__2 bg-light w-50 p-2">
+        <draggable
+          class="dragArea list-group w-full"
+          :list="todos"
+          @change="log"
+        >
+          <div
+            v-for="todo in todos"
+            :key="todo"
+            class="todoApp w-100 d-flex border pt-2"
+          >
+            <div class="icons__item">
+              <span>=</span>
             </div>
-         </div>
+            <div class="item__content">
+              <h6>{{ todo.title }}</h6>
+              <span>{{ todo.notes }}</span>
+              <div class="tags__task d-flex">
+                <div class="btn-front-back">
+                  <div class="btn-front" v-for="tag in todo.tags" :key="tag">
+                    <span
+                      ><i class="fa-solid fa-circle"></i> {{ tag.tag }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="items_icon d-flex">
+              <i class="fa-solid fa-circle-exclamation"></i>
+              <div v-if="todo.favorites == null"><i
+                @click="makeFavorite($event, todo.id)"
+                class="fa-solid fa-star"
+              ></i></div>
+              <div v-else><i style="color:yellow;"
+                @click="makeFavorite($event, todo.id)"
+                class="fa-solid fa-star"
+              ></i></div>
+              
+              <!-- <i
+                @click="makeFavorite($event, todo.id)"
+                class="fa-solid fa-star"
+              ></i> -->
+              <i
+                @click="deleteTag(todo.id)"
+                class="fa-solid fa-trash text-danger"
+              ></i>
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </div>
+          </div>
+        </draggable>
       </div>
-   </div>
+      <div class="side__3 bg-light w-50">
+        <div class="todo__forms">
+          <div class="todo__done d-flex align-items-center">
+            <label>
+              <input
+                type="checkbox"
+                data-ng-model="example.check"
+                v-model="status"
+                id="flexCheckDefault"
+              />
+              <span class="box"></span>
+              Mark as Done
+            </label>
+            <div class="items_icon d-flex">
+              <i class="fa-solid fa-circle-exclamation"></i>
+              <i
+                @click="makeFavorite($event, todo.id)"
+                class="fa-solid fa-star "
+              ></i>
+              <i
+                @click="deleteTag(todo.id)"
+                class="fa-solid fa-trash text-danger"
+              ></i>
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="title__todo">
+              <textarea placeholder="Title *" v-model="title"></textarea>
+            </div>
+            <div class="col-md-6">
+              <input
+                type="date"
+                placeholder="Start Date*"
+                v-model="start_date"
+              />
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <input type="date" placeholder="Due Date*" v-model="end_date" />
+            </div>
+
+            <div class="title__todo">
+              <textarea placeholder="Notes *" v-model="notes"></textarea>
+            </div>
+            <div class="tags-input-container">
+              <div
+                class="tag"
+                v-for="(tag, index) in tags"
+                :key="'tag' + index"
+              >
+                {{ tag }}
+              </div>
+              <input v-model="tagValue" v-on:keyup.enter="addTags" />
+            </div>
+            <div class="col-12">
+              <button type="button" @click="addTodo" class="btn btn-primary">
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
-import {onMounted, ref, watchEffect} from "vue";
-import {VueDraggableNext} from "vue-draggable-next";
+import { onMounted, ref, watchEffect } from "vue";
+import { VueDraggableNext } from "vue-draggable-next";
 import $ from "jquery";
 import axios from "@/config/axios";
-import {useRoute} from "vue-router";
+import { useRoute } from "vue-router";
+import { showNotification } from "@/config/show-notification.js";
 export default {
-   components: {
-      draggable: VueDraggableNext,
-   },
-   setup() {
-      const route = useRoute();
+  components: {
+    draggable: VueDraggableNext,
+  },
+  setup() {
+    const route = useRoute();
 
-      const todos = ref(null);
-      const status = ref(0);
-      const title = ref("");
-      const start_date = ref("");
-      const end_date = ref("");
-      const notes = ref("");
-      const tags = ref([]);
-      const activeTag = ref(null);
-      const tagValue = ref("");
+    const todos = ref(null);
+    const status = ref(0);
+    const title = ref("");
+    const start_date = ref("");
+    const end_date = ref("");
+    const notes = ref("");
+    const tags = ref([]);
+    const activeTag = ref(null);
+    const tagValue = ref("");
 
-      const getTodos = () => {
-         const filter = route.params.filter;
-         const paramsData = {
-            done: filter == "done" ? true : false,
-            today: filter == "today" ? true : false,
-            scheduled: filter == "scheduled" ? true : false,
-            priority: filter == "priority" ? true : false,
-            filter: filter == "search" ? route.params.search : false,
-         };
-         axios.get("/todo", {params: paramsData}).then((res) => {
-            console.log("todo", res);
-            todos.value = res.data;
-         });
+
+
+    const getTodos = () => {
+      const filter = route.params.filter;
+      const paramsData = {
+        done: filter == "done" ? true : false,
+        today: filter == "today" ? true : false,
+        scheduled: filter == "scheduled" ? true : false,
+        priority: filter == "priority" ? true : false,
+        filter: filter == "search" ? route.params.search : false,
       };
-
-      const addTodo = async () => {
-         const formData = new FormData();
-         if (document.getElementById("flexCheckDefault").checked) {
-            formData.append("status", 1);
-         } else {
-            formData.append("status", 0);
-         }
-         formData.append("title", title.value);
-         formData.append("start_date", start_date.value);
-         formData.append("end_date", end_date.value);
-         formData.append("notes", notes.value);
-         for (var i = 0; i < tags.value.length; i++) {
-            formData.append("tags[" + i + "][tag]", tags.value[i]);
-         }
-
-         axios({
-            url: "/todo/addTodo",
-            method: "POST",
-            data: formData,
-         }).then(async (res) => {
-            title.value = "";
-            status.value = "";
-            start_date.value = "";
-            end_date.value = "";
-            notes.value = "";
-            console.log("suceess!", res);
-            // route.go({name: "todo"});
-         });
-      };
-
-      const makeFavorite = (e, id) => {
-         axios.post("/todo/favorite/" + id).then(async (res) => {
-            $(e).addClass("text-warning");
-            console.log("suceess!", res);
-         });
-      };
-      // const HashTags = () => {
-      //    if (!tagValue.value == "") tagss.value.push(tagValue.value);
-      //    tagValue.value = "";
-      // };
-      const addTags = (e) => {
-         tags.value.push(e.target.value);
-         tagValue.value = "";
-      };
-      const removeTag = (index) => {
-         addTags.value.splice(index, 1);
-      };
-
-      onMounted(() => {
-         watchEffect(() => {
-            if (route.params.filter) {
-               getTodos();
-            }
-         });
+      axios.get("/todo", { params: paramsData }).then((res) => {
+        todos.value = res.data;
       });
+    };
+    const getAll = () => {
+      axios.get("/todo").then((res) => {
+        todos.value = res.data;
+        console.log(res)
+      });
+    };
 
-      return {
-         todos,
-         status,
-         title,
-         start_date,
-         end_date,
-         notes,
-         tags,
-         addTodo,
-         addTags,
-         activeTag,
-         tagValue,
-         makeFavorite,
-         enabled: true,
-         dragging: false,
-      };
-   },
-   methods: {
-      log(event) {
-         console.log(event);
+    onMounted(() => {
+      getAll(),
+        watchEffect(() => {
+          if (route.params.filter) {
+            getTodos();
+          }
+        });
+    });
+ 
+    return {
+      todos,
+      status,
+      title,
+      start_date,
+      end_date,
+      notes,
+      tags,
+      addTodo,
+      addTags,
+      activeTag,
+      tagValue,
+      makeFavorite,
+      deleteTag,
+      enabled: true,
+      dragging: false,
+    };
+  },
+  methods: {
+    log(event) {},
+  },
+  directives: {
+    focus: {
+      inserted: (el) => {
+        el.focus();
       },
-   },
-   directives: {
-      focus: {
-         inserted: (el) => {
-            el.focus();
-            console.log(el);
-         },
-      },
-   },
+    },
+  },
 };
 </script>
 
 <style scoped>
 .tags-input-container {
-   width: 100%;
-   max-width: 600px;
-   padding: 10px;
-   background-color: rgba(255, 255, 255, 0.7);
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.7);
 }
 .tags-input-container input {
-   width: 100%;
-   padding: 5px;
-   margin: 0;
-   border: 0;
-   outline: none;
-   background-color: #efefef;
-   font-size: 1rem;
+  width: 100%;
+  padding: 5px;
+  margin: 0;
+  border: 0;
+  outline: none;
+  background-color: #efefef;
+  font-size: 1rem;
 }
 .tags-input-container .tag {
-   float: left;
-   padding: 3px 10px;
-   margin: 0 10px 5px 0;
-   display: flex;
-   justify-content: center;
-   cursor: pointer;
-   background-color: #ffb743;
+  float: left;
+  padding: 3px 10px;
+  margin: 0 10px 5px 0;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #ffb743;
 }
 .tags-input-container .tag:hover {
-   /* background-color: #57c340; */
-   border-radius: 5px;
+  /* background-color: #57c340; */
+  border-radius: 5px;
 }
 .tags-input-container .tag span:first-child {
-   margin-right: 8px;
+  margin-right: 8px;
 }
 .tags-input-container .tag svg {
-   color: #666;
+  color: #666;
 }
 .tags-input-container .tag svg:hover {
-   color: #333;
+  color: #333;
 }
 </style>
