@@ -277,6 +277,7 @@ header.header__bar {
 
 .btn-front-back {
    display: flex;
+   flex-wrap: wrap;
    gap: 20px;
    padding-top: 10px;
 }

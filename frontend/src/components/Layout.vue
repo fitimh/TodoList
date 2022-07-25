@@ -1,33 +1,21 @@
 <template>
   <div class="content__item-side">
     <div
-      class="
-        content__item-side-1
-        pt-5
-        d-flex
-        bg-light
-        justify-content-between
-        bg-grey
-      "
+      class="content__item-side-1 pt-5 d-flex bg-light justify-content-between bg-grey"
     ></div>
     <div
-      class="
-        content__item__side
-        d-flex
-        bg-light
-        justify-content-between
-        bg-grey
-      "
+      class="content__item__side d-flex bg-light justify-content-between bg-grey"
     >
       <div class="side__2 bg-light w-50 p-2">
         <draggable
           class="dragArea list-group w-full"
           :list="todos"
           @change="log"
+          
         >
           <div
-            v-for="todo in todos"
-            :key="todo"
+          v-for="todo in todos"
+          :key="todo"
             class="todoApp w-100 d-flex border pt-2"
           >
             <div class="icons__item">
@@ -47,7 +35,7 @@
               </div>
             </div>
             <div class="items_icon d-flex">
-               <i class="fa-solid fa-circle-exclamation"></i>
+              <i class="fa-solid fa-circle-exclamation"></i>
               <div v-if="todo.favorites == null">
                 <i
                   @click="makeFavorite($event, todo.id, todo)"
@@ -57,7 +45,7 @@
               <div v-else>
                 <i
                   style="color: orange"
-                  @click="makeFavorite($event, todo.id)"
+                  @click="makeFavorite($event, todo.id, todo)"
                   class="fa-solid fa-star"
                 ></i>
               </div>
@@ -69,6 +57,7 @@
             </div>
           </div>
         </draggable>
+        <div class="w-100 justify-content-center d-flex" v-if="todos && todos.length < 1">No todos found.</div>
       </div>
       <div class="side__3 bg-light w-50">
         <div class="todo__forms">
@@ -84,7 +73,6 @@
               Mark as Done
             </label>
             <div class="items_icon d-flex">
-         
               <i class="fa-solid fa-ellipsis-vertical"></i>
             </div>
           </div>
@@ -157,7 +145,6 @@ export default {
     const getTodos = () => {
       const filter = route.params.filter;
       const paramsData = {
-      
         done: filter == "done" ? true : false,
         today: filter == "today" ? true : false,
         scheduled: filter == "scheduled" ? true : false,
@@ -166,6 +153,7 @@ export default {
       };
       axios.get("/todo", { params: paramsData }).then((res) => {
         todos.value = res.data;
+        console.log(res.data);
       });
     };
     const addTodo = async () => {
@@ -188,12 +176,13 @@ export default {
         url: "/todo/addTodo",
         method: "POST",
         data: formData,
-      }).then(async () => {
+      }).then(() => {
         title.value = "";
         status.value = "";
         start_date.value = "";
         end_date.value = "";
         notes.value = "";
+        
         location.reload();
       });
     };
@@ -213,7 +202,7 @@ export default {
     };
     const makeFavorite = (e, id, todo) => {
       axios.post("/todo/favorite/" + id).then(async (res) => {
-        todo.favorites = res.data.favorites
+        todo.favorites = res.data.favorites;
         getTodos();
       });
     };
@@ -227,9 +216,7 @@ export default {
     onMounted(() => {
       getTodos(),
         watchEffect(() => {
-          if (route.params.filter) {
             getTodos();
-          }
         });
     });
 
