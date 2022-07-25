@@ -1,10 +1,23 @@
 <template>
   <div class="content__item-side">
     <div
-      class="content__item-side-1 pt-5 d-flex bg-light justify-content-between bg-grey"
+      class="
+        content__item-side-1
+        pt-5
+        d-flex
+        bg-light
+        justify-content-between
+        bg-grey
+      "
     ></div>
     <div
-      class="content__item__side d-flex bg-light justify-content-between bg-grey"
+      class="
+        content__item__side
+        d-flex
+        bg-light
+        justify-content-between
+        bg-grey
+      "
     >
       <div class="side__2 bg-light w-50 p-2">
         <draggable
@@ -35,15 +48,20 @@
             </div>
             <div class="items_icon d-flex">
               <i class="fa-solid fa-circle-exclamation"></i>
-              <div v-if="todo.favorites == null"><i
-                @click="makeFavorite($event, todo.id)"
-                class="fa-solid fa-star"
-              ></i></div>
-              <div v-else><i style="color:yellow;"
-                @click="makeFavorite($event, todo.id)"
-                class="fa-solid fa-star"
-              ></i></div>
-              
+              <div v-if="todo.favorites == null">
+                <i
+                  @click="makeFavorite($event, todo.id)"
+                  class="fa-solid fa-star"
+                ></i>
+              </div>
+              <div v-else>
+                <i
+                  style="color: yellow"
+                  @click="makeFavorite($event, todo.id)"
+                  class="fa-solid fa-star"
+                ></i>
+              </div>
+
               <!-- <i
                 @click="makeFavorite($event, todo.id)"
                 class="fa-solid fa-star"
@@ -74,7 +92,7 @@
               <i class="fa-solid fa-circle-exclamation"></i>
               <i
                 @click="makeFavorite($event, todo.id)"
-                class="fa-solid fa-star "
+                class="fa-solid fa-star"
               ></i>
               <i
                 @click="deleteTag(todo.id)"
@@ -147,8 +165,6 @@ export default {
     const activeTag = ref(null);
     const tagValue = ref("");
 
-
-
     const getTodos = () => {
       const filter = route.params.filter;
       const paramsData = {
@@ -165,10 +181,64 @@ export default {
     const getAll = () => {
       axios.get("/todo").then((res) => {
         todos.value = res.data;
-        console.log(res)
+        console.log(res);
       });
     };
-
+    const addTodo = async () => {
+      const formData = new FormData();
+      if (document.getElementById("flexCheckDefault").checked) {
+        formData.append("status", 1);
+      } else {
+        formData.append("status", 0);
+      }
+      formData.append("title", title.value);
+      formData.append("start_date", start_date.value);
+      formData.append("end_date", end_date.value);
+      formData.append("notes", notes.value);
+      if (tags.value.length) {
+        for (var i = 0; i < tags.value.length; i++) {
+          formData.append("tags[" + i + "][tag]", tags.value[i]);
+        }
+      }
+      axios({
+        url: "/todo/addTodo",
+        method: "POST",
+        data: formData,
+      }).then(async (res) => {
+        title.value = "";
+        status.value = "";
+        start_date.value = "";
+        end_date.value = "";
+        notes.value = "";
+        location.reload();
+      });
+    };
+    const deleteTag = (id) => {
+      var x = confirm("Are you sure you want to delete?");
+      if (x === true) {
+        axios.delete("/todo/removeTodo/" + id).then(async () => {
+          showNotification({
+            message: "Sucessfully deleted",
+            type: "success",
+            duration: 5000,
+            appearance: "light",
+          });
+          getAll();
+        });
+      }
+    };
+    const makeFavorite = (e, id) => {
+      axios.post("/todo/favorite/" + id).then(async (res) => {
+        location.reload();
+      });
+    };
+    const addTags = (e) => {
+      tags.value.push(e.target.value);
+      tagValue.value = "";
+    };
+    const removeTag = (index) => {
+      addTags.value.splice(index, 1);
+    };
     onMounted(() => {
       getAll(),
         watchEffect(() => {
@@ -177,7 +247,7 @@ export default {
           }
         });
     });
- 
+
     return {
       todos,
       status,
