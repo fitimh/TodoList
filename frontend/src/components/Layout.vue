@@ -47,25 +47,20 @@
               </div>
             </div>
             <div class="items_icon d-flex">
-              <i class="fa-solid fa-circle-exclamation"></i>
+               <i class="fa-solid fa-circle-exclamation"></i>
               <div v-if="todo.favorites == null">
                 <i
-                  @click="makeFavorite($event, todo.id)"
+                  @click="makeFavorite($event, todo.id, todo)"
                   class="fa-solid fa-star"
                 ></i>
               </div>
               <div v-else>
                 <i
                   style="color: yellow"
-                  @click="makeFavorite($event, todo.id)"
+                  @click="makeFavorite($event, todo.id, todo)"
                   class="fa-solid fa-star"
                 ></i>
               </div>
-
-              <!-- <i
-                @click="makeFavorite($event, todo.id)"
-                class="fa-solid fa-star"
-              ></i> -->
               <i
                 @click="deleteTag(todo.id)"
                 class="fa-solid fa-trash text-danger"
@@ -89,15 +84,15 @@
               Mark as Done
             </label>
             <div class="items_icon d-flex">
-              <i class="fa-solid fa-circle-exclamation"></i>
+              <!-- <i class="fa-solid fa-circle-exclamation"></i>
               <i
-                @click="makeFavorite($event, todo.id)"
+                @click="makeFavorite($event, todo.id, todo)"
                 class="fa-solid fa-star"
               ></i>
               <i
-                @click="deleteTag(todo.id)"
+                @click="deleteTodo_Tag(todo.id)"
                 class="fa-solid fa-trash text-danger"
-              ></i>
+              ></i> -->
               <i class="fa-solid fa-ellipsis-vertical"></i>
             </div>
           </div>
@@ -144,7 +139,6 @@
 <script>
 import { onMounted, ref, watchEffect } from "vue";
 import { VueDraggableNext } from "vue-draggable-next";
-import $ from "jquery";
 import axios from "@/config/axios";
 import { useRoute } from "vue-router";
 import { showNotification } from "@/config/show-notification.js";
@@ -168,6 +162,7 @@ export default {
     const getTodos = () => {
       const filter = route.params.filter;
       const paramsData = {
+      
         done: filter == "done" ? true : false,
         today: filter == "today" ? true : false,
         scheduled: filter == "scheduled" ? true : false,
@@ -176,12 +171,6 @@ export default {
       };
       axios.get("/todo", { params: paramsData }).then((res) => {
         todos.value = res.data;
-      });
-    };
-    const getAll = () => {
-      axios.get("/todo").then((res) => {
-        todos.value = res.data;
-        console.log(res);
       });
     };
     const addTodo = async () => {
@@ -204,7 +193,7 @@ export default {
         url: "/todo/addTodo",
         method: "POST",
         data: formData,
-      }).then(async (res) => {
+      }).then(async () => {
         title.value = "";
         status.value = "";
         start_date.value = "";
@@ -213,7 +202,7 @@ export default {
         location.reload();
       });
     };
-    const deleteTag = (id) => {
+    const deleteTodo_Tag = (id) => {
       var x = confirm("Are you sure you want to delete?");
       if (x === true) {
         axios.delete("/todo/removeTodo/" + id).then(async () => {
@@ -223,13 +212,14 @@ export default {
             duration: 5000,
             appearance: "light",
           });
-          getAll();
+          getTodos();
         });
       }
     };
-    const makeFavorite = (e, id) => {
+    const makeFavorite = (e, id, todo) => {
       axios.post("/todo/favorite/" + id).then(async (res) => {
-        location.reload();
+        todo.favorites = res.data.favorites
+        getTodos();
       });
     };
     const addTags = (e) => {
@@ -237,10 +227,10 @@ export default {
       tagValue.value = "";
     };
     const removeTag = (index) => {
-      addTags.value.splice(index, 1);
+      tagValue.value.splice(index, 1);
     };
     onMounted(() => {
-      getAll(),
+      getTodos(),
         watchEffect(() => {
           if (route.params.filter) {
             getTodos();
@@ -261,7 +251,8 @@ export default {
       activeTag,
       tagValue,
       makeFavorite,
-      deleteTag,
+      deleteTodo_Tag,
+      removeTag,
       enabled: true,
       dragging: false,
     };

@@ -13,7 +13,7 @@
                <input
                   class="form-control mr-sm-2"
                   type="search"
-                  placeholder="Search..."
+                  placeholder="Search By Tag"
                   id="search__bar"
                   aria-label="Search"
                   v-on:keyup.enter="search"
